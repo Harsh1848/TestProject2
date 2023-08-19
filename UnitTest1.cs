@@ -8,40 +8,76 @@ namespace TestProject2
 {
     public class GameControllerTests
     {
-        [Fact]
-        public void MakeMove_ValidMove_ReturnsRedirectToActionResult()
+        public class GameTests
         {
-            // Arrange
-            var controller = new GameController();
-            controller.TempData["Board"] = new char[3, 3];
-            controller.TempData["CurrentPlayer"] = 'X';
-
-            // Act
-            var result = controller.MakeMove(0, 0);
-
-            // Assert
-            Assert.IsType<RedirectToActionResult>(result);
-        }
-
-        [Fact]
-        public void MakeMove_InvalidMove_DoesNotAlterGameBoard()
-        {
-            // Arrange
-            var controller = new GameController();
-            var gameBoard = new GameBoard
+            [Fact]
+            public void Game_Starts_With_CurrentPlayer_X()
             {
-                Board = new char[3, 3],
-                CurrentPlayer = 'X'
-            };
-            controller.TempData["Board"] = gameBoard.Board;
-            controller.TempData["CurrentPlayer"] = gameBoard.CurrentPlayer;
+                var game = new Game();
 
-            // Act
-            var result = controller.MakeMove(0, 0);
+                Assert.Equal("X", game.CurrentPlayer);
+            }
 
-            // Assert
-            var newGameBoard = (char[,])controller.TempData["Board"];
-            Assert.Equal(gameBoard.Board, newGameBoard);
+            [Fact]
+            public void Game_CheckWin_Returns_True_If_X_Wins()
+            {
+                var game = new Game();
+
+                game.MakeMove(0); // X
+                game.MakeMove(3); // O
+                game.MakeMove(1); // X
+                game.MakeMove(4); // O
+                game.MakeMove(2); // X
+
+                Assert.Equal("X", game.Winner);
+            }
+
+            [Fact]
+            public void Game_CheckWin_Returns_True_If_O_Wins()
+            {
+                var game = new Game();
+
+                game.MakeMove(0); // X
+                game.MakeMove(3); // O
+                game.MakeMove(1); // X
+                game.MakeMove(4); // O
+                game.MakeMove(6); // X
+                game.MakeMove(5); // O
+
+                Assert.Equal("O", game.Winner);
+            }
+
+           
+
+
+            [Fact]
+            public void Game_Updates_Score_Correctly_For_X()
+            {
+                var game = new Game();
+
+                game.MakeMove(0); // X
+                game.MakeMove(3); // O
+                game.MakeMove(1); // X
+                game.MakeMove(4); // O
+                game.MakeMove(2); // X
+
+                Assert.Equal(1, game.ScoreX);
+            }
+
+            [Fact]
+            public void Game_Updates_Score_Correctly_For_O()
+            {
+                var game = new Game();
+
+                game.MakeMove(0); // X
+                game.MakeMove(3); // O
+                game.MakeMove(1); // X
+                game.MakeMove(4); // O
+                game.MakeMove(6); // X
+                game.MakeMove(5); // O
+
+                Assert.Equal(1, game.ScoreO);
+            }
         }
     }
 }
